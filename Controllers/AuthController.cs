@@ -9,13 +9,13 @@ namespace TicketTracker.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly TokenService _tokenService;
 
         public AuthController(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
             TokenService tokenService)
         {
             _userManager = userManager;
@@ -45,7 +45,7 @@ namespace TicketTracker.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] AuthUser model)
         {
-            var user = new IdentityUser { UserName = model.Username };
+            var user = new User { UserName = model.Username };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)

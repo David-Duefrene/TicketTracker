@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
-using TicketTracker.Models;
-
-using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using TicketTracker.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -66,7 +67,7 @@ builder.Services.AddDbContext<GroupContext>(options => {
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddDbContext<IdentityContext>(options =>
     options.UseInMemoryDatabase("Identity"));
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>()
     .AddDefaultTokenProviders();
 
@@ -88,7 +89,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        NameClaimType = ClaimTypes.Name
     };
 });
 
@@ -107,20 +109,23 @@ using (var scope = app.Services.CreateScope())
     var userContext = scope.ServiceProvider.GetRequiredService<UserContext>();
     var groupContext = scope.ServiceProvider.GetRequiredService<GroupContext>();
 
+    var defaultAdminUsername = "string"; // Default admin username
+    var defaultAdminPassword = "string"; // Default admin password
+
     // Ensure Admin group exists
-    var adminGroup = groupContext.Groups.FirstOrDefault(g => g.Name == "Admin");
+    var adminGroup = groupContext.Groups.FirstOrDefault(g => g.Name == defaultAdminUsername);
     if (adminGroup == null)
     {
-        adminGroup = new TicketTracker.Models.Group { Name = "Admin" };
+        adminGroup = new TicketTracker.Models.Group { Name = defaultAdminUsername };
         groupContext.Groups.Add(adminGroup);
         groupContext.SaveChanges();
     }
 
     // Ensure Admin user exists
-    var adminUser = userContext.Users.FirstOrDefault(u => u.UserName == "Admin");
+    var adminUser = userContext.Users.FirstOrDefault(u => u.UserName == defaultAdminUsername);
     if (adminUser == null)
     {
-        adminUser = new TicketTracker.Models.User { UserName = "Admin" };
+        adminUser = new TicketTracker.Models.User { UserName = defaultAdminUsername };
         userContext.Users.Add(adminUser);
         userContext.SaveChanges();
 
@@ -128,13 +133,16 @@ using (var scope = app.Services.CreateScope())
         // Ensure Admin IdentityUser exists
         
     }
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    //var userManager = provider.GetRequiredService<UserManager<User>>();
 
-    var identityAdmin = await userManager.FindByNameAsync("Admin");
+    var identityAdmin = await userManager.FindByNameAsync(defaultAdminUsername);
     if (identityAdmin == null)
     {
-        identityAdmin = new IdentityUser { UserName = "Admin" };
-        await userManager.CreateAsync(identityAdmin, "Password");
+        //identityAdmin = new IdentityUser { UserName = "string" }; // username
+        identityAdmin = new User { UserName = defaultAdminUsername }; // username
+        await userManager.CreateAsync(identityAdmin, defaultAdminPassword); //password
     }
 
     // Ensure Admin user is in Admin group

@@ -16,17 +16,64 @@ namespace TicketTracker.Controllers
     public class TicketsController : ControllerBase
     {
         private readonly TicketContext _context;
+        private readonly UserContext _userContext;
 
-        public TicketsController(TicketContext context)
+        public TicketsController(TicketContext context, UserContext userContext)
         {
             _context = context;
+            _userContext = userContext;
         }
 
         // GET: api/Tickets
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
         {
-            return await _context.Tickets.ToListAsync();
+
+            var username = User?.Identity?.Name;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized();
+            }
+
+            // Get the user from your custom User table
+            var user = await _userContext.Users.Where(u => u.UserName == username)
+                .Include(u => u.UserGroups)
+                    .ThenInclude(ug => ug.Group)
+                        .ThenInclude(g => g.QueuePermissions)
+                .FirstOrDefaultAsync();
+
+            // log user to conosle for debugging
+            Console.WriteLine($"User: {user}, UserId: {username}");
+
+            if (user == null)
+            {
+                return NotFound("User not found in application database.");
+            }
+
+            // Admin override
+            bool isAdmin = user.UserGroups.Any(ug => ug.Group.Name == "Admin");
+
+            List<Ticket> tickets;
+            if (isAdmin)
+            {
+                tickets = await _context.Tickets.ToListAsync();
+            }
+            else
+            {
+                var readableQueueIds = user.UserGroups
+                    .SelectMany(ug => ug.Group.QueuePermissions)
+                    .Where(qp => qp.CanRead)
+                    .Select(qp => qp.TicketQueue.Id)
+                    .Distinct()
+                    .ToList();
+
+                tickets = await _context.Tickets
+                    .Where(t => readableQueueIds.Contains(t.TicketQueue.Id))
+                    .ToListAsync();
+            }
+
+            return Ok(tickets);
         }
 
         // GET: api/Tickets/5

@@ -1,14 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using TicketTracker.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace TicketTracker.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
-        public required string UserName { get; set; }
+        //public int Id { get; set; }
+        //public required string UserName { get; set; }
         public ICollection<UserGroup> UserGroups { get; set; } = [];
     }
 
@@ -31,10 +32,13 @@ public class UserContext : DbContext
     public DbSet<UserGroup> UserGroups { get; set; } = null!;
 }
 
-public class IdentityContext : IdentityDbContext
+public class IdentityContext : IdentityDbContext<User>
 {
     public IdentityContext(DbContextOptions<IdentityContext> options)
         : base(options)
     {
     }
+
+    public DbSet<Group> Groups { get; set; } = null!;
+    public DbSet<UserGroup> UserGroups { get; set; } = null!;
 }
