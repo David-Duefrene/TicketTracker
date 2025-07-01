@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using TicketTracker.Models;
+using TicketTracker.Services;
 
 namespace TicketTracker.Controllers
 {
@@ -17,41 +14,19 @@ namespace TicketTracker.Controllers
     {
         private readonly TicketContext _context;
         private readonly UserContext _userContext;
+        private readonly CurrentUserService _currentUserService;
 
-        public TicketsController(TicketContext context, UserContext userContext)
+        public TicketsController(TicketContext context, UserContext userContext, CurrentUserService currentUserService)
         {
             _context = context;
             _userContext = userContext;
+            _currentUserService = currentUserService;
         }
-
         // GET: api/Tickets
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
         {
-
-            var username = User?.Identity?.Name;
-
-            if (string.IsNullOrEmpty(username))
-            {
-                return Unauthorized();
-            }
-
-            // Get the user from your custom User table
-            var user = await _userContext.Users.Where(u => u.UserName == username)
-                .Include(u => u.UserGroups)
-                    .ThenInclude(ug => ug.Group)
-                        .ThenInclude(g => g.QueuePermissions)
-                .FirstOrDefaultAsync();
-
-            // log user to conosle for debugging
-            Console.WriteLine($"User: {user}, UserId: {username}");
-
-            if (user == null)
-            {
-                return NotFound("User not found in application database.");
-            }
-
-            // Admin override
+            var user = await _currentUserService.GetCurrentUserAsync(User);
             bool isAdmin = user.UserGroups.Any(ug => ug.Group.Name == "Admin");
 
             List<Ticket> tickets;

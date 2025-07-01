@@ -65,6 +65,7 @@ builder.Services.AddDbContext<GroupContext>(options => {
 //builder.Services.AddDbContext<GroupContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<TicketTracker.Services.CurrentUserService>();
 builder.Services.AddDbContext<IdentityContext>(options =>
     options.UseInMemoryDatabase("Identity"));
 builder.Services.AddIdentity<User, IdentityRole>()
