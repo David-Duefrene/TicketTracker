@@ -7,5 +7,6 @@
             schemas: './src/api/model',
             client: 'react-query',
         },
+        baseURL: 'https://localhost:7246',
     },
 };

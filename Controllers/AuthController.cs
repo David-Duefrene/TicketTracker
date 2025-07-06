@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using TicketTracker.Models;
 
 namespace TicketTracker.Controllers
@@ -26,13 +27,21 @@ namespace TicketTracker.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthUser model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
+            try
+            {
+                var user = await _userManager.FindByNameAsync(model.Username);
 
-            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
-                return Unauthorized();
+                if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
+                    return Unauthorized();
 
-            var token = _tokenService.CreateToken(user);
-            return Ok(new { token });
+                var token = _tokenService.CreateToken(user);
+                return Ok(new { token });
+            }
+            catch (Exception ex) // Fix for CS0120 and CA2241
+            {
+                Console.WriteLine($"An error occurred during login: {ex}"); // Correctly format the string and use the exception instance
+                return StatusCode(500, "Internal server error. Please try again later.");
+            }
         }
 
         [HttpPost("logout")]
@@ -54,6 +63,5 @@ namespace TicketTracker.Controllers
             var token = _tokenService.CreateToken(user);
             return Ok(new { Token = token });
         }
-
     }
 }
