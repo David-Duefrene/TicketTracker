@@ -7,8 +7,10 @@ import { useAuth } from './context/AuthContext';
 import CreateUser from './Pages/CreateUser';
 import Login from './Pages/Login';
 import './App.css';
+import axios from 'axios';
 
 const queryClient = new QueryClient();
+axios.defaults.baseURL = 'https://localhost:7246';
 
 function App() {
     const { token, logout } = useAuth();

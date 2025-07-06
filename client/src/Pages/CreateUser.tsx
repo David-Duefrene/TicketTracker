@@ -1,6 +1,9 @@
 import { useState } from 'react';
+
 import { usePostApiUsers } from '../api/users';
 import type { User } from '../api/model/user';
+
+import { useAuth } from '../context/AuthContext';
 
 const initialUser: Partial<User> = {
   userName: '',
@@ -12,8 +15,11 @@ export default function CreateUser() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const mutation = usePostApiUsers({
+    const [error, setError] = useState<string | null>(null);
+
+    const { token } = useAuth();
+
+    const mutation = usePostApiUsers({
     mutation: {
       onSuccess: () => {
         setSuccess(true);
@@ -48,7 +54,8 @@ export default function CreateUser() {
       }
 
       // If the User type supports password, include it here
-      mutation.mutate({ data: { ...form, password } as User });
+      mutation.mutate(
+          { data: { ...form, password } as User }, { axios: { headers: { Authorization: `Bearer ${token}` } } });
   };
 
   return (
