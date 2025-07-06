@@ -1,34 +1,38 @@
 import React, { useState } from 'react';
+
 import { usePostApiAuthLogin } from '../api/auth';
 import type { AuthUser } from '../api/model/authUser';
 
+import { useAuth } from '../context/AuthContext';
+
 const Login: React.FC = () => {
-  const [form, setForm] = useState<AuthUser>({ username: '', password: '' });
-  const [error, setError] = useState<string | null>(null);
-  const mutation = usePostApiAuthLogin();
+    const [form, setForm] = useState<AuthUser>({ username: '', password: '' });
+    const [error, setError] = useState<string | null>(null);
+    const mutation = usePostApiAuthLogin();
+    const { login } = useAuth();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-      setError(null);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
 
-      mutation.mutate(
-      { data: form },
-      {
-        onSuccess: (data) => {
-              console.log('Login successful', data);
-              // TODO store token in a context and redirect to dashboard/last page requested
-        },
-        onError: (err: unknown) => {
-            setError('Invalid username or password');
-            console.error('Login failed', err);
-        },
-      }
-    );
-  };
+        mutation.mutate(
+            { data: form },
+            {
+                onSuccess: (data) => {
+                    console.log('Login successful', data);
+                    login(data.data.token);
+                },
+                onError: (err: unknown) => {
+                    setError('Invalid username or password');
+                    console.error('Login failed', err);
+                },
+            }
+        );
+    };
 
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: 300, margin: '0 auto' }}>
