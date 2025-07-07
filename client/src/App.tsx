@@ -6,6 +6,7 @@ import { useAuth } from './context/AuthContext';
 
 import CreateUser from './Pages/CreateUser';
 import Login from './Pages/Login';
+import Logout from './Pages/Logout';
 import './App.css';
 import axios from 'axios';
 
@@ -13,13 +14,14 @@ const queryClient = new QueryClient();
 axios.defaults.baseURL = 'https://localhost:7246';
 
 function App() {
-    const { token, logout } = useAuth();
+    const { token } = useAuth();
 
     return (
         <>
             <h1>TicketTracker - Create User</h1>
             <QueryClientProvider client={queryClient}>
-                    {token ? <CreateUser /> : <Login />}
+                {token ? <CreateUser /> : <Login />}
+                <Logout />
             </QueryClientProvider>
         </>
     );
