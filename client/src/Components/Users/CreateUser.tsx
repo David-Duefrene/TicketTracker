@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { usePostApiUsers } from '../api/users';
-import type { User } from '../api/model/user';
+import { usePostApiUsers } from '../../api/users';
+import type { User } from '../../api/model/user';
 
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const initialUser: Partial<User> = {
   userName: '',

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useAuth } from './context/AuthContext';
 
-import CreateUser from './Components/CreateUser';
+import CreateUser from './Components/Users/CreateUser';
 import Login from './Components/Login';
 import Logout from './Components/Logout';
 import './App.css';
