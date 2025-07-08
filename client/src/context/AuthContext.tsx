@@ -8,15 +8,21 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+let currentToken: string | null = null;
+export const setCurrentToken = (token: string | null) => currentToken = token;
+export const getCurrentToken = () => currentToken;
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
 
     const login = (newToken: string) => {
         setToken(newToken);
+        setCurrentToken(newToken);
     };
 
     const logout = () => {
         setToken(null);
+        setCurrentToken(null);
     };
 
     return (

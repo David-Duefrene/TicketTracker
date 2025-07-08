@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { usePostApiAuthLogin } from '../api/auth';
 import type { AuthUser } from '../api/model/authUser';
 
-import { useAuth } from '../context/AuthContext';
+import { useAuth, setCurrentToken } from '../context/AuthContext';
 
 const Login: React.FC = () => {
     const [form, setForm] = useState<AuthUser>({ username: '', password: '' });
@@ -24,6 +24,7 @@ const Login: React.FC = () => {
             {
                 onSuccess: (data) => {
                     console.log('Login successful', data);
+                    setCurrentToken(data.data.token);
                     login(data.data.token);
                 },
                 onError: (err: unknown) => {

@@ -54,8 +54,9 @@ export default function CreateUser() {
       }
 
       // If the User type supports password, include it here
+      console.log("token: ", token);
       mutation.mutate(
-          { data: { ...form, password } as User }, { axios: { headers: { Authorization: `Bearer ${token}` } } });
+          { data: { ...form, password } as User });
   };
 
   return (

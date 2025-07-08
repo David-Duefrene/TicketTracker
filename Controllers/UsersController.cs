@@ -58,10 +58,12 @@ namespace TicketTracker.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public UsersController(UserContext context)
+        public UsersController(UserContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/Users
@@ -119,12 +121,19 @@ namespace TicketTracker.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser([FromBody] AuthUser model)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            //_context.Users.Add(user);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            var newUser = new User { UserName = model.Username };
+            var result = await _userManager.CreateAsync(newUser, model.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return CreatedAtAction("GetUser", new { id = newUser.Id }, newUser);
         }
 
         // DELETE: api/Users/5
