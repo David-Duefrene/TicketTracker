@@ -123,10 +123,6 @@ namespace TicketTracker.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser([FromBody] AuthUser model)
         {
-            //_context.Users.Add(user);
-            //await _context.SaveChangesAsync();
-
-            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
             var newUser = new User { UserName = model.Username };
             var result = await _userManager.CreateAsync(newUser, model.Password);
 

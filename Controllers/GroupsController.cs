@@ -43,6 +43,28 @@ namespace TicketTracker.Controllers
             return @group;
         }
 
+        // GET: api/Groups/my
+        [HttpGet("my")]
+        public async Task<ActionResult<IEnumerable<object>>> GetMyGroups()
+        {
+            // Get the current user's Id from the claims
+            var userId = User?.Identity?.Name;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            // Find all groups for the current user
+            var groups = await _context.UserGroups
+                .Include(ug => ug.Group)
+                .Where(ug => ug.User.Id == userId)
+                .Select(ug => new { ug.Group.Id, ug.Group.Name })
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(groups);
+        }
+
         // PUT: api/Groups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
