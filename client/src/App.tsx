@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -6,10 +6,11 @@ import { useAuth, getCurrentToken } from './context/AuthContext';
 
 import CreateUser from './Components/Users/CreateUser';
 import Login from './Components/Login';
+import CreateGroup from './Components/Groups/CreateGroup';
+import TabbedComponent from './components/UI/tabbedComponent';
 
 import './App.css';
 import axios from 'axios';
-import CreateGroup from './Components/Groups/CreateGroup';
 
 const queryClient = new QueryClient();
 axios.defaults.baseURL = 'https://localhost:7246';
@@ -32,60 +33,17 @@ axios.interceptors.request.use(
 
 function App() {
     const { token } = useAuth();
-    const [selectedTab, setSelectedTab] = useState<'CreateUser' | 'CreateGroup'>('CreateUser');
 
-    const renderTabContent = () => {
-        switch (selectedTab) {
-            case 'CreateUser':
-                return <CreateUser />;
-            case 'CreateGroup':
-                return <CreateGroup />;
-            default:
-                return null;
-        }
-    };
-
-    const content = (
-        <div>
-            <div style={{ display: 'flex', borderBottom: '1px solid #ccc', marginBottom: 16 }}>
-                <button
-                    style={{
-                        padding: '8px 16px',
-                        border: 'none',
-                        borderBottom: selectedTab === 'CreateUser' ? '2px solid #007bff' : '2px solid transparent',
-                        background: 'none',
-                        cursor: 'pointer',
-                        fontWeight: selectedTab === 'CreateUser' ? 'bold' : 'normal'
-                    }}
-                    onClick={() => setSelectedTab('CreateUser')}
-                >
-                    Create User
-                </button>
-                <button
-                    style={{
-                        padding: '8px 16px',
-                        border: 'none',
-                        borderBottom: selectedTab === 'CreateGroup' ? '2px solid #007bff' : '2px solid transparent',
-                        background: 'none',
-                        cursor: 'pointer',
-                        fontWeight: selectedTab === 'CreateGroup' ? 'bold' : 'normal'
-                    }}
-                    onClick={() => setSelectedTab('CreateGroup')}
-                >
-                    Create Group
-                </button>
-            </div>
-            <div>
-                {renderTabContent()}
-            </div>
-        </div>
-    )
+    const tabs = [
+        ['Create User', <CreateUser key="create-user" />],
+        ['Create Group', <CreateGroup key="create-group" />]
+    ];
 
     return (
         <>
             <h1>TicketTracker</h1>
             <QueryClientProvider client={queryClient}>
-                {token ? content : <Login />}
+                {token ? <TabbedComponent tabs={tabs} /> : <Login />}
             </QueryClientProvider>
         </>
     );
