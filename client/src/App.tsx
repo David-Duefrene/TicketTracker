@@ -4,9 +4,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useAuth, getCurrentToken } from './context/AuthContext';
 
-import CreateUser from './Components/Users/CreateUser';
 import Login from './Components/Login';
+
+import CreateUser from './Components/Users/CreateUser';
 import CreateGroup from './Components/Groups/CreateGroup';
+import CreateTicketQueue from './Components/TicketQueue/CreateTicketQueue';
+
 import TabbedComponent from './components/UI/tabbedComponent';
 
 import './App.css';
@@ -36,7 +39,8 @@ function App() {
 
     const tabs = [
         ['Create User', <CreateUser key="create-user" />],
-        ['Create Group', <CreateGroup key="create-group" />]
+        ['Create Group', <CreateGroup key="create-group" />],
+        ['Create Ticket Queue', <CreateTicketQueue key="create-ticket-queue" />]
     ];
 
     return (
