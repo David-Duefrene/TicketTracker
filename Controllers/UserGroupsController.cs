@@ -13,6 +13,7 @@ namespace TicketTracker.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [Obsolete("UserGroupsController is obsolete. Group membership is now managed via claims.")]
     public class UserGroupsController : ControllerBase
     {
         private readonly GroupContext _context;
@@ -24,81 +25,39 @@ namespace TicketTracker.Controllers
 
         // GET: api/UserGroups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserGroup>>> GetUserGroups()
+        public ActionResult GetUserGroups()
         {
-            return await _context.UserGroups.ToListAsync();
+            return Ok("Group membership is now managed via claims. This endpoint is obsolete.");
         }
 
         // GET: api/UserGroups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserGroup>> GetUserGroup(int id)
+        public ActionResult GetUserGroup(int id)
         {
-            var userGroup = await _context.UserGroups.FindAsync(id);
-
-            if (userGroup == null)
-            {
-                return NotFound();
-            }
-
-            return userGroup;
+            return Ok("Group membership is now managed via claims. This endpoint is obsolete.");
         }
 
         // PUT: api/UserGroups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserGroup(int id, UserGroup userGroup)
+        public IActionResult PutUserGroup(int id)
         {
-            if (id != userGroup.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(userGroup).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserGroupExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok("Group membership is now managed via claims. This endpoint is obsolete.");
         }
 
         // POST: api/UserGroups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserGroup>> PostUserGroup(UserGroup userGroup)
+        public ActionResult PostUserGroup()
         {
-            _context.UserGroups.Add(userGroup);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUserGroup", new { id = userGroup.Id }, userGroup);
+            return Ok("Group membership is now managed via claims. This endpoint is obsolete.");
         }
 
         // DELETE: api/UserGroups/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserGroup(int id)
+        public IActionResult DeleteUserGroup(int id)
         {
-            var userGroup = await _context.UserGroups.FindAsync(id);
-            if (userGroup == null)
-            {
-                return NotFound();
-            }
-
-            _context.UserGroups.Remove(userGroup);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok("Group membership is now managed via claims. This endpoint is obsolete.");
         }
 
         private bool UserGroupExists(int id)

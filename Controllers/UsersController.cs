@@ -16,26 +16,31 @@ using TicketTracker.Models;
 public class TokenService
 {
     private readonly IConfiguration _configuration;
+    private readonly UserManager<User> _userManager;
 
-    public TokenService(IConfiguration configuration)
+    public TokenService(IConfiguration configuration, UserManager<User> userManager)
     {
         _configuration = configuration;
+        _userManager = userManager;
     }
 
-    public string CreateToken(IdentityUser user)
+    public async Task<string> CreateToken(User user)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id),
-
         };
+
+        // Add all user claims (including group claims)
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        claims.AddRange(userClaims);
 
         var token = new JwtSecurityToken(
             issuer: jwtSettings["Issuer"],

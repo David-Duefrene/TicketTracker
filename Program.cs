@@ -122,50 +122,41 @@ using (var scope = app.Services.CreateScope())
 {
     var userContext = scope.ServiceProvider.GetRequiredService<UserContext>();
     var groupContext = scope.ServiceProvider.GetRequiredService<GroupContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
     var defaultAdminUsername = "string"; // Default admin username
     var defaultAdminPassword = "string"; // Default admin password
+    var adminGroupName = "Admin"; // Use a clear group name for claims
 
     // Ensure Admin group exists
-    var adminGroup = groupContext.Groups.FirstOrDefault(g => g.Name == defaultAdminUsername);
+    var adminGroup = groupContext.Groups.FirstOrDefault(g => g.Name == adminGroupName);
     if (adminGroup == null)
     {
-        adminGroup = new TicketTracker.Models.Group { Name = defaultAdminUsername };
+        adminGroup = new TicketTracker.Models.Group { Name = adminGroupName };
         groupContext.Groups.Add(adminGroup);
         groupContext.SaveChanges();
     }
 
-    // Ensure Admin user exists
-    var adminUser = userContext.Users.FirstOrDefault(u => u.UserName == defaultAdminUsername);
-    if (adminUser == null)
-    {
-        adminUser = new TicketTracker.Models.User { UserName = defaultAdminUsername };
-        userContext.Users.Add(adminUser);
-        userContext.SaveChanges();
-
-        // Create an IdentityUser for the Admin user
-        // Ensure Admin IdentityUser exists
-        
-    }
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    //var userManager = provider.GetRequiredService<UserManager<User>>();
-
+    // Ensure Admin user exists in Identity
     var identityAdmin = await userManager.FindByNameAsync(defaultAdminUsername);
     if (identityAdmin == null)
     {
-        //identityAdmin = new IdentityUser { UserName = "string" }; // username
-        identityAdmin = new User { UserName = defaultAdminUsername }; // username
-        await userManager.CreateAsync(identityAdmin, defaultAdminPassword); //password
+        identityAdmin = new User { UserName = defaultAdminUsername };
+        var result = await userManager.CreateAsync(identityAdmin, defaultAdminPassword);
+        if (result.Succeeded)
+        {
+            // Add group claim to admin user
+            await userManager.AddClaimAsync(identityAdmin, new Claim("Group", adminGroupName));
+        }
     }
-
-    // Ensure Admin user is in Admin group
-    var userGroupExists = userContext.UserGroups.Any(ug => ug.User.Id == adminUser.Id && ug.Group.Id == adminGroup.Id);
-    if (!userGroupExists)
+    else
     {
-        var userGroup = new TicketTracker.Models.UserGroup { User = adminUser, Group = adminGroup, GroupId = adminGroup.Id };
-        userContext.UserGroups.Add(userGroup);
-        userContext.SaveChanges();
+        // Ensure admin user has the group claim
+        var claims = await userManager.GetClaimsAsync(identityAdmin);
+        if (!claims.Any(c => c.Type == "Group" && c.Value == adminGroupName))
+        {
+            await userManager.AddClaimAsync(identityAdmin, new Claim("Group", adminGroupName));
+        }
     }
 }
 

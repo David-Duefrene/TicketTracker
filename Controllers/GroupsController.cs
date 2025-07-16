@@ -45,24 +45,15 @@ namespace TicketTracker.Controllers
 
         // GET: api/Groups/my
         [HttpGet("my")]
-        public async Task<ActionResult<IEnumerable<object>>> GetMyGroups()
+        public ActionResult<IEnumerable<object>> GetMyGroups()
         {
-            // Get the current user's Id from the claims
-            var userId = User?.Identity?.Name;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
+            // Get group claims from the current user
+            var groupClaims = User.Claims
+                .Where(c => c.Type == "Group")
+                .Select(c => new { Name = c.Value })
+                .ToList();
 
-            // Find all groups for the current user
-            var groups = await _context.UserGroups
-                .Include(ug => ug.Group)
-                .Where(ug => ug.User.Id == userId)
-                .Select(ug => new { ug.Group.Id, ug.Group.Name })
-                .Distinct()
-                .ToListAsync();
-
-            return Ok(groups);
+            return Ok(groupClaims);
         }
 
         // PUT: api/Groups/5
