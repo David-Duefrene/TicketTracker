@@ -162,6 +162,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors();
 app.UseHttpsRedirection();
+app.UseAuthentication(); // <-- Add this line before UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

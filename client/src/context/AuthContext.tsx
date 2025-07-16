@@ -1,23 +1,28 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
 interface AuthContextType {
-    token: string | null;
-    login: (token: string) => void;
+    token: JwtResponse | null;
+    login: (token: JwtResponse) => void;
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-let currentToken: string | null = null;
-export const setCurrentToken = (token: string | null) => currentToken = token;
-export const getCurrentToken = () => currentToken;
+interface JwtResponse {
+    result: string;
+}
+
+let currentToken: JwtResponse | null = null;
+export const setCurrentToken = (token: JwtResponse | null) => currentToken = token;
+export const getCurrentToken = () => currentToken?.result;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [token, setToken] = useState<string | null>(null);
+    const [token, setToken] = useState<JwtResponse | null>(null);
 
-    const login = (newToken: string) => {
+    const login = (newToken: JwtResponse) => {
         setToken(newToken);
         setCurrentToken(newToken);
+        console.log(newToken)
     };
 
     const logout = () => {
