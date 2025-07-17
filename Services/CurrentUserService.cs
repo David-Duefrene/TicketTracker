@@ -6,11 +6,11 @@ namespace TicketTracker.Services
 {
     public class CurrentUserService
     {
-        private readonly UserContext _userContext;
+        private readonly IdentityContext _identityContext;
 
-        public CurrentUserService(UserContext userContext)
+        public CurrentUserService(IdentityContext identityContext)
         {
-            _userContext = userContext;
+            _identityContext = identityContext;
         }
 
         public async Task<User?> GetCurrentUserAsync(ClaimsPrincipal userPrincipal)
@@ -21,7 +21,7 @@ namespace TicketTracker.Services
                 return null;
             }
 
-            var user = await _userContext.Users
+            var user = await _identityContext.Users
                 .Where(u => u.UserName == username)
                 .Include(u => u.UserGroups)
                     .ThenInclude(ug => ug.Group)

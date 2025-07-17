@@ -1,17 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
+
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+
 using TicketTracker.Models;
+using TicketTracker.Filters;
 
 public class TokenService
 {
@@ -62,10 +60,10 @@ namespace TicketTracker.Controllers
     [Authorize]
     public class UsersController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly IdentityContext _context;
         private readonly UserManager<User> _userManager;
 
-        public UsersController(UserContext context, UserManager<User> userManager)
+        public UsersController(IdentityContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -73,6 +71,7 @@ namespace TicketTracker.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
