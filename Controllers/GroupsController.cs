@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using TicketTracker.Filters;
 using TicketTracker.Models;
 
 namespace TicketTracker.Controllers
@@ -59,6 +56,7 @@ namespace TicketTracker.Controllers
         // PUT: api/Groups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> PutGroup(int id, Group @group)
         {
             if (id != @group.Id)
@@ -90,6 +88,7 @@ namespace TicketTracker.Controllers
         // POST: api/Groups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<ActionResult<Group>> PostGroup(Group @group)
         {
             _context.Groups.Add(@group);
@@ -100,6 +99,7 @@ namespace TicketTracker.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> DeleteGroup(int id)
         {
             var @group = await _context.Groups.FindAsync(id);

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TicketTracker.Filters;
 using TicketTracker.Models;
 
 namespace TicketTracker.Controllers
@@ -46,6 +42,7 @@ namespace TicketTracker.Controllers
         // PUT: api/TicketQueues/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> PutTicketQueue(int id, TicketQueue ticketQueue)
         {
             if (id != ticketQueue.Id)
@@ -77,6 +74,7 @@ namespace TicketTracker.Controllers
         // POST: api/TicketQueues
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<ActionResult<TicketQueue>> PostTicketQueue(TicketQueue ticketQueue)
         {
             _context.TicketQueue.Add(ticketQueue);
@@ -87,6 +85,7 @@ namespace TicketTracker.Controllers
 
         // DELETE: api/TicketQueues/5
         [HttpDelete("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> DeleteTicketQueue(int id)
         {
             var ticketQueue = await _context.TicketQueue.FindAsync(id);

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
+
+using TicketTracker.Filters;
 using TicketTracker.Models;
 
 namespace TicketTracker.Controllers
@@ -52,6 +53,7 @@ namespace TicketTracker.Controllers
         }
 
         [HttpPost("register")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> Register([FromBody] AuthUser model)
         {
             var user = new User { UserName = model.Username };

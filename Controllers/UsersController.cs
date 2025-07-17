@@ -79,6 +79,7 @@ namespace TicketTracker.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -94,6 +95,7 @@ namespace TicketTracker.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id.ToString() != user.Id)
@@ -125,6 +127,7 @@ namespace TicketTracker.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<ActionResult<User>> PostUser([FromBody] AuthUser model)
         {
             var newUser = new User { UserName = model.Username };
@@ -138,6 +141,7 @@ namespace TicketTracker.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);

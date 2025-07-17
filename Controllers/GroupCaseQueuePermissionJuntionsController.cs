@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using TicketTracker.Filters;
 using TicketTracker.Models;
 
 namespace TicketTracker.Controllers
@@ -46,6 +43,7 @@ namespace TicketTracker.Controllers
         // PUT: api/GroupCaseQueuePermissionJuntions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> PutGroupCaseQueuePermissionJuntion(int id, GroupCaseQueuePermissionJuntion groupCaseQueuePermissionJuntion)
         {
             if (id != groupCaseQueuePermissionJuntion.Id)
@@ -77,6 +75,7 @@ namespace TicketTracker.Controllers
         // POST: api/GroupCaseQueuePermissionJuntions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<ActionResult<GroupCaseQueuePermissionJuntion>> PostGroupCaseQueuePermissionJuntion(GroupCaseQueuePermissionJuntion groupCaseQueuePermissionJuntion)
         {
             _context.GroupCaseQueuePermissionJuntion.Add(groupCaseQueuePermissionJuntion);
@@ -87,6 +86,7 @@ namespace TicketTracker.Controllers
 
         // DELETE: api/GroupCaseQueuePermissionJuntions/5
         [HttpDelete("{id}")]
+        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
         public async Task<IActionResult> DeleteGroupCaseQueuePermissionJuntion(int id)
         {
             var groupCaseQueuePermissionJuntion = await _context.GroupCaseQueuePermissionJuntion.FindAsync(id);
