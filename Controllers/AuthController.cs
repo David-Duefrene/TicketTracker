@@ -53,7 +53,7 @@ namespace TicketTracker.Controllers
         }
 
         [HttpPost("register")]
-        [TypeFilter(typeof(AdminGroupAuthorizationFilter))]
+        [AdminGroupAuthorization]
         public async Task<IActionResult> Register([FromBody] AuthUser model)
         {
             var user = new User { UserName = model.Username };
