@@ -80,7 +80,7 @@ namespace TicketTracker.Controllers
         // GET: api/Users/5
         [HttpGet("{id}")]
         [AdminGroupAuthorization]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<User>> GetUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -96,9 +96,9 @@ namespace TicketTracker.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [AdminGroupAuthorization]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(string id, User user)
         {
-            if (id.ToString() != user.Id)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
@@ -142,7 +142,7 @@ namespace TicketTracker.Controllers
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         [AdminGroupAuthorization]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -156,9 +156,9 @@ namespace TicketTracker.Controllers
             return NoContent();
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(string id)
         {
-            return _context.Users.Any(e => e.Id == id.ToString());
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }
