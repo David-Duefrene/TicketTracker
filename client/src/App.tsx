@@ -1,17 +1,10 @@
-import React from 'react';
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useAuth, getCurrentToken } from './context/AuthContext';
 
 import Login from './Components/Login';
 
-import CreateUser from './Components/Users/CreateUser';
-import CreateGroup from './Components/Groups/CreateGroup';
-import CreateTicketQueue from './Components/TicketQueue/CreateTicketQueue';
-import AddUserToGroup from './Components/Users/AddUserToGroup';
-
-import TabbedComponent from './Components/UI/tabbedComponent';
+import AdminBoard from './features/AdminBoard';
 
 import './App.css';
 import axios from 'axios';
@@ -38,18 +31,11 @@ axios.interceptors.request.use(
 function App() {
     const { token } = useAuth();
 
-    const tabs = [
-        ['Create User', <CreateUser key="create-user" />],
-        ['Create Group', <CreateGroup key="create-group" />],
-        ['Create Ticket Queue', <CreateTicketQueue key="create-ticket-queue" />],
-        ['Add User to Group', <AddUserToGroup key="add-user-to-group" />]
-    ];
-
     return (
         <>
             <h1>TicketTracker</h1>
             <QueryClientProvider client={queryClient}>
-                {token ? <TabbedComponent tabs={tabs} /> : <Login />}
+                {token ? <AdminBoard /> : <Login />}
             </QueryClientProvider>
         </>
     );
