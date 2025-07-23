@@ -1,0 +1,9 @@
+/* Example button styles */
+.button {
+  padding: 8px 16px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

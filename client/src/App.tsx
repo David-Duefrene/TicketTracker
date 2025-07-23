@@ -2,9 +2,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useAuth, getCurrentToken } from './context/AuthContext';
 
-import Login from './Components/Login';
+import { Login } from './features/users/index';
 
-import AdminBoard from './features/AdminBoard';
+import AdminBoard from './dashboards/AdminBoard';
 
 import './App.css';
 import axios from 'axios';
