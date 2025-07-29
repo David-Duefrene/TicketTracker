@@ -4,6 +4,7 @@ import {  AddUserToGroup, CreateUser } from '../features/users/index';
 import CreateGroupCaseQueuePermissionJuntion from '../features/groupCaseQueuePermissionJuntion/components/CreateGroupCaseQueuePermissionJuntion';
 
 import { TabbedComponent } from '../components/TabbedComponent/index';
+import GetGroups from '../features/groups/components/GetGroups';
 
 const AdminBoard = () => {
     const userTabs: [string, React.ReactNode][] = [
@@ -13,6 +14,7 @@ const AdminBoard = () => {
 
     const groupTabs: [string, React.ReactNode][] = [
         ['Create Group', <UserGroupCreate key="create-group" />],
+        ['Get Groups', <GetGroups key="get-groups" />], // Assuming GetGroups is a component that lists groups
     ];
 
     const ticketQueueTabs: [string, React.ReactNode][] = [

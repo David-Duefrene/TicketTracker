@@ -1,21 +1,23 @@
 import { useGetApiGroups } from '../../../api/groups';
 
+import SelectableList from '../../../components/ItemList/SelectableList';
+
 const GetGroups = () => {
-  const { data, isLoading, error } = useGetApiGroups();
+    const { data } = useGetApiGroups();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading groups.</div>;
+    if (!data?.data)
+        throw new Error('No group data found');
 
-  return (
-    <div>
-      <h2>Groups List</h2>
-      <ul>
-        {data?.data?.map((group) => (
-          <li key={group.id}>{group.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
+    const groups = data.data;
+
+    return (
+        <div>
+            <h2>Groups List</h2>
+            <SelectableList
+                items={groups.map(group => group.name)}
+            />
+        </div>
+    );
 };
 
 export default GetGroups;
