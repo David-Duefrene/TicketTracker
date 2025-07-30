@@ -10,7 +10,7 @@ interface Props {
 
 const UpdateGroupCaseQueuePermissionJuntion: React.FC<Props> = ({ initial }) => {
   const [form, setForm] = useState<GroupCaseQueuePermissionJuntion>(initial);
-  const { mutate, isPending, isError, isSuccess } = usePutApiGroupCaseQueuePermissionJuntionsId();
+  const { mutate, isPending, isSuccess } = usePutApiGroupCaseQueuePermissionJuntionsId();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -35,7 +35,6 @@ const UpdateGroupCaseQueuePermissionJuntion: React.FC<Props> = ({ initial }) => 
       <label><input type="checkbox" name="canUpdate" checked={!!form.canUpdate} onChange={handleChange} /> Can Update</label>
       <label><input type="checkbox" name="canDelete" checked={!!form.canDelete} onChange={handleChange} /> Can Delete</label>
       <button type="submit" disabled={isPending}>Update</button>
-      {isError && <div>Error updating</div>}
       {isSuccess && <div>Updated successfully</div>}
     </form>
   );

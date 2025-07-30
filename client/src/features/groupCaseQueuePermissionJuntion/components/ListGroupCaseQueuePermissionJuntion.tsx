@@ -1,25 +1,24 @@
 import { useGetApiGroupCaseQueuePermissionJuntions } from '../../../api/group-case-queue-permission-juntions';
 
+import SelectableList from '../../../components/ItemList/SelectableList';
+
 import type { GroupCaseQueuePermissionJuntion } from '../../../api/model/groupCaseQueuePermissionJuntion';
 
 const ListGroupCaseQueuePermissionJuntion: React.FC = () => {
-  const { data, isLoading, error } = useGetApiGroupCaseQueuePermissionJuntions();
+  const { data } = useGetApiGroupCaseQueuePermissionJuntions();
+  
+  if (!data?.data) throw new Error('No group case queue permission juntion data found');
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading data</div>;
+  const junctions = data.data;
 
   return (
     <div>
       <h2>Group Case Queue Permission Juntion List</h2>
-      <ul>
-        {data?.data?.map((item: GroupCaseQueuePermissionJuntion) => (
-          <li key={item.id}>
-            ID: {item.id}, Group: {item.group?.name}, Queue: {item.ticketQueue?.name},
-            Create: {item.canCreate ? 'Yes' : 'No'}, Read: {item.canRead ? 'Yes' : 'No'},
-            Update: {item.canUpdate ? 'Yes' : 'No'}, Delete: {item.canDelete ? 'Yes' : 'No'}
-          </li>
+      <SelectableList
+        items={junctions.map((junction: GroupCaseQueuePermissionJuntion) => 
+          (`Group: ${junction.group?.name}, Queue: ${junction.ticketQueue?.name}, Create: ${junction.canCreate ? 'Yes' : 'No'}, Read: ${junction.canRead ? 'Yes' : 'No'}, Update: ${junction.canUpdate ? 'Yes' : 'No'}, Delete: ${junction.canDelete ? 'Yes' : 'No'}`
         ))}
-      </ul>
+      />
     </div>
   );
 };

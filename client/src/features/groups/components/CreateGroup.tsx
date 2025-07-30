@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { usePostApiGroups } from '../../../api/groups';
 import type { Group } from '../../../api/model/group';
@@ -9,8 +9,6 @@ const CreateGroup: React.FC = () => {
   const {
     mutate,
     isPending,
-    isError,
-    error,
     isSuccess
   } = usePostApiGroups();
 
@@ -47,9 +45,6 @@ const CreateGroup: React.FC = () => {
       <button type="submit" disabled={isPending}>
         {isPending ? 'Creating...' : 'Create Group'}
       </button>
-      {isError && (
-        <div style={{ color: 'red' }}>Error: {(error as any)?.message || 'Failed to create group.'}</div>
-      )}
       {isSuccess && success && (
         <div style={{ color: 'green' }}>Group created successfully!</div>
       )}

@@ -1,22 +1,17 @@
-import React from 'react';
-
 import { useGetApiTicketQueues } from '../../../api/ticket-queues';
 
+import SelectableList from '../../../components/ItemList/SelectableList';
+
 const GetTicketQueues: React.FC = () => {
-  const { data, isLoading, error } = useGetApiTicketQueues({});
+  const { data } = useGetApiTicketQueues({});
+  if (!data?.data) throw new Error('No ticket queue data found');
 
   return (
     <div>
       <h2>All Ticket Queues</h2>
-      {isLoading && <div>Loading...</div>}
-      {error && <div>Error loading ticket queues</div>}
-      <ul>
-        {data?.data?.map(queue => (
-          <li key={queue.id}>
-            {queue.name} (ID: {queue.id})
-          </li>
-        ))}
-      </ul>
+      <SelectableList
+        items={data.data.map(queue => queue.name)}
+      />
     </div>
   );
 };

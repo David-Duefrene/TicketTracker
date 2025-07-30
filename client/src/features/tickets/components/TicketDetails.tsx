@@ -8,15 +8,13 @@ interface Props {
 }
 
 const TicketDetails: React.FC<Props> = ({ id }) => {
-  const { data, isLoading, error } = useGetApiTicketsId(id);
+  const { data } = useGetApiTicketsId(id);
   const ticket = data?.data;
   const queueId = ticket?.ticketQueue?.id;
   if (!queueId) throw new Error('Ticket does not have an associated queue ID');
   const { data: queueData } = useGetApiTicketQueuesId(queueId, { query: { enabled: !!queueId } });
 
-  if (isLoading) return <div>Loading ticket...</div>;
-  if (error) return <div>Error loading ticket</div>;
-  if (!ticket) return <div>Ticket not found</div>;
+  if (!ticket) throw new Error('Ticket not found');
 
   return (
     <div>

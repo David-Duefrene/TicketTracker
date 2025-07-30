@@ -1,12 +1,7 @@
 import { useGetApiUsers } from '../../../api/users';
-import { useState } from 'react';
 
 export default function GetUsers() {
-  const { data, isLoading, error } = useGetApiUsers();
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-
-  if (isLoading) return <div>Loading users...</div>;
-  if (error) return <div>Error loading users</div>;
+  const { data } = useGetApiUsers();
 
   return (
     <div>
@@ -15,7 +10,6 @@ export default function GetUsers() {
         {data?.data?.map(user => (
           <li key={user.id}>
             {user.userName} ({user.email})
-            {/*<button onClick={() => setSelectedUserId(user.id)}>View</button>*/ /*TODO link ti GetUser*/}
           </li>
         ))}
       </ul>

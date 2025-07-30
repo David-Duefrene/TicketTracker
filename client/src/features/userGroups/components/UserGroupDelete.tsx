@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDeleteApiGroupsId } from '../../../api/groups';
 interface Props {
   id: number;

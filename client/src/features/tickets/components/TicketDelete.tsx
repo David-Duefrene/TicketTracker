@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDeleteApiTicketsId } from '../../../api/tickets';
 
 interface Props {
@@ -16,7 +15,6 @@ const TicketDelete: React.FC<Props> = ({ id }) => {
     <button onClick={handleDelete} disabled={mutation.isPending}>
       Delete Ticket
       {mutation.isPending && <span>...</span>}
-      {mutation.isError && <span>Error deleting ticket</span>}
       {mutation.isSuccess && <span>Deleted!</span>}
     </button>
   );

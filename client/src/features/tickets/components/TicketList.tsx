@@ -2,10 +2,7 @@ import React from 'react';
 import { useGetApiTickets } from '../../../api/tickets';
 
 const TicketList: React.FC = () => {
-  const { data, isLoading, error } = useGetApiTickets();
-
-  if (isLoading) return <div>Loading tickets...</div>;
-  if (error) return <div>Error loading tickets</div>;
+  const { data } = useGetApiTickets();
 
   return (
     <div>

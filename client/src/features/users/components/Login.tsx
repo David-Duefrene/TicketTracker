@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { usePostApiAuthLogin } from '../../../api/auth';
 import type { AuthUser } from '../../../api/model/authUser';

@@ -9,7 +9,7 @@ interface UpdateGroupProps {
 
 const UpdateGroup: React.FC<UpdateGroupProps> = ({ id, initialName }) => {
   const [name, setName] = useState(initialName);
-  const { mutate, isPending, isError, isSuccess } = usePutApiGroupsId();
+  const { mutate, isPending, isSuccess } = usePutApiGroupsId();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,6 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ id, initialName }) => {
         <input value={name} onChange={e => setName(e.target.value)} />
       </label>
       <button type="submit" disabled={isPending}>Update Group</button>
-      {isError && <div>Error updating group</div>}
       {isSuccess && <div>Group updated!</div>}
     </form>
   );

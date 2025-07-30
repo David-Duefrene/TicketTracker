@@ -2,8 +2,6 @@ import { useState } from 'react';
 
 import { usePostApiUsers } from '../../../api/users';
 
-import { useAuth } from '../../../context/AuthContext';
-
 export default function CreateUser() {
     const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
@@ -11,8 +9,6 @@ export default function CreateUser() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    const { token } = useAuth();
 
     const mutation = usePostApiUsers({
     mutation: {
@@ -40,13 +36,6 @@ export default function CreateUser() {
           return;
       }
 
-      // If the User type supports password, include it here
-      console.log("token: ", token);
-      // if (!form) {
-      //   setError('Form is not properly initialized');
-      //   throw new Error('Form is not properly initialized');
-      //   return;
-      // }
       mutation.mutate(
           { data: { 
             // ...form,

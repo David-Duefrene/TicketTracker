@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useAuth, getCurrentToken } from './context/AuthContext';
@@ -28,6 +29,30 @@ axios.interceptors.request.use(
     }
 );
 
+
+
+
+// Basic ErrorBoundary component
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+    constructor(props: { children: React.ReactNode }) {
+        super(props);
+        this.state = { hasError: false };
+    }
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+    componentDidCatch(error: any, errorInfo: any) {
+        // You can log error info here
+        console.error(error, errorInfo);
+    }
+    render() {
+        if (this.state.hasError) {
+            return <div style={{ color: 'red' }}>Something went wrong.</div>;
+        }
+        return this.props.children;
+    }
+}
+
 function App() {
     const { token } = useAuth();
 
@@ -35,7 +60,11 @@ function App() {
         <>
             <h1>TicketTracker</h1>
             <QueryClientProvider client={queryClient}>
-                {token ? <AdminBoard /> : <Login />}
+                <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                        {token ? <AdminBoard /> : <Login />}
+                    </Suspense>
+                </ErrorBoundary>
             </QueryClientProvider>
         </>
     );

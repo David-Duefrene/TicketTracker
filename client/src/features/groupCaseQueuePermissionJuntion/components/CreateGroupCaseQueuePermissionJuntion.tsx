@@ -6,7 +6,7 @@ import type { GroupCaseQueuePermissionJuntion } from '../../../api/model/groupCa
 
 const CreateGroupCaseQueuePermissionJuntion: React.FC = () => {
   const [form, setForm] = useState<GroupCaseQueuePermissionJuntion>({ group: { name: '' }, ticketQueue: { name: '' } });
-  const { mutate, isPending, isError, isSuccess } = usePostApiGroupCaseQueuePermissionJuntions();
+  const { mutate, isPending, isSuccess } = usePostApiGroupCaseQueuePermissionJuntions();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -31,7 +31,6 @@ const CreateGroupCaseQueuePermissionJuntion: React.FC = () => {
       <label><input type="checkbox" name="canUpdate" checked={!!form.canUpdate} onChange={handleChange} /> Can Update</label>
       <label><input type="checkbox" name="canDelete" checked={!!form.canDelete} onChange={handleChange} /> Can Delete</label>
       <button type="submit" disabled={isPending}>Create</button>
-      {isError && <div>Error creating</div>}
       {isSuccess && <div>Created successfully</div>}
     </form>
   );

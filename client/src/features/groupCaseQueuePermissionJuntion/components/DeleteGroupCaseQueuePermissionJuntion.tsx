@@ -5,7 +5,7 @@ interface Props {
 }
 
 const DeleteGroupCaseQueuePermissionJuntion: React.FC<Props> = ({ id }) => {
-  const { mutate, isPending, isError, isSuccess } = useDeleteApiGroupCaseQueuePermissionJuntionsId();
+  const { mutate, isPending, isSuccess } = useDeleteApiGroupCaseQueuePermissionJuntionsId();
 
   const handleDelete = () => {
     mutate({ id });
@@ -14,7 +14,6 @@ const DeleteGroupCaseQueuePermissionJuntion: React.FC<Props> = ({ id }) => {
   return (
     <div>
       <button onClick={handleDelete} disabled={isPending}>Delete</button>
-      {isError && <span>Error deleting</span>}
       {isSuccess && <span>Deleted successfully</span>}
     </div>
   );

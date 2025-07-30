@@ -1,12 +1,7 @@
-import React from 'react';
-
 import { useGetApiGroups } from '../../../api/groups';
 
 const UserGroupList: React.FC = () => {
-  const { data, isLoading, error } = useGetApiGroups();
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading user groups</div>;
+  const { data } = useGetApiGroups();
 
   return (
     <div>

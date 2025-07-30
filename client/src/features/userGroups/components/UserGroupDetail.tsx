@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGetApiGroupsId } from '../../../api/groups';
 
 interface Props {
@@ -6,14 +5,11 @@ interface Props {
 }
 
 const UserGroupDetail: React.FC<Props> = ({ id }) => {
-  const { data, isLoading, error } = useGetApiGroupsId(id);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading user group</div>;
+  const { data } = useGetApiGroupsId(id);
 
   const ug = data?.data;
-  if (!ug) return <div>User group not found</div>;
-  
+  if (!ug) throw new Error('User group not found');
+
   return (
     <div>
       <h2>User Group Detail</h2>

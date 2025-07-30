@@ -5,10 +5,7 @@ interface GetGroupProps {
 }
 
 const GetGroup = ({ id }: GetGroupProps) => {
-  const { data, error, isLoading } = useGetApiGroupsId(id, {});
-
-  if (isLoading) return <div>Loading group...</div>;
-  if (error) return <div>Error loading group</div>;
+  const { data } = useGetApiGroupsId(id, {});
 
   return (
     <div>

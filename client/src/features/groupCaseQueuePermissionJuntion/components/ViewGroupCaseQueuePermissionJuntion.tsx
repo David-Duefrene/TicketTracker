@@ -1,19 +1,15 @@
 import { useGetApiGroupCaseQueuePermissionJuntionsId } from '../../../api/group-case-queue-permission-juntions';
 
-import type { GroupCaseQueuePermissionJuntion } from '../../../api/model/groupCaseQueuePermissionJuntion';
-
 interface Props {
   id: number;
 }
 
 const ViewGroupCaseQueuePermissionJuntion: React.FC<Props> = ({ id }) => {
-  const { data, isLoading, error } = useGetApiGroupCaseQueuePermissionJuntionsId(id);
+  const { data } = useGetApiGroupCaseQueuePermissionJuntionsId(id);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading data</div>;
-  if (!data?.data) return <div>No data found</div>;
+  if (!data?.data) throw new Error('No group case queue permission juntion data found');
 
-  const item: GroupCaseQueuePermissionJuntion = data.data;
+  const item = data.data;
 
   return (
     <div>
