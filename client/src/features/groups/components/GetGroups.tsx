@@ -4,10 +4,7 @@ import SelectableList from '../../../components/ItemList/SelectableList';
 
 const GetGroups = () => {
     const { data } = useGetApiGroups();
-
-    if (!data?.data)
-        throw new Error('No group data found');
-
+    if (!data?.data) throw new Error('No group data found');
     const groups = data.data;
 
     return (

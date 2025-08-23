@@ -10,7 +10,13 @@ import AdminBoard from './dashboards/AdminBoard';
 import './App.css';
 import axios from 'axios';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            suspense: true,
+        },
+    },
+} as any);
 axios.defaults.baseURL = 'https://localhost:7246';
 
 axios.defaults.headers.common['Content-Type'] = 'application/json';
