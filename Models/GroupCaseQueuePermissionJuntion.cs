@@ -4,6 +4,8 @@
     {
         public int Id { get; set; }
 
+        public required string Name { get; set; }
+
         public required Group Group { get; set; }
         public required TicketQueue TicketQueue { get; set; }
 
