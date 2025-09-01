@@ -13,7 +13,7 @@ function useToggleList<T>(initial: T[] = []) {
 
   const has = (item: T) => items.includes(item);
 
-  return { items, toggle, has };
+  return { items, setItems, toggle, has };
 }
 
 export default useToggleList;

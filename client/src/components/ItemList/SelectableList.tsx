@@ -1,27 +1,31 @@
+import { useState } from 'react';
+
 type SelectableListProps = {
   items: string[];
-  onSelect?: (selectedItem: string) => void;
+  onSelect?: ((e: React.FormEvent) => void)
 };
-
-const defaultOnSelect = () => {};
 
 export const SelectableList: React.FC<SelectableListProps> = ({
   items,
-  onSelect = defaultOnSelect,
+  onSelect,
 }) => {
-
-  const isSelectable = onSelect !== defaultOnSelect;
+  const [selectedItem, setSelectedItem] = useState<string>();
 
   return (
     <ul>
       {items.map((item, index) => (
         <li
           key={`${item}-${index}`}
-          onClick={() => onSelect(item)}
+          onClick={() => {
+            // toggle(item)
+            setSelectedItem(item);
+            console.log(`Item selected: ${item}`);
+          }}
           style={{
             padding: "4px 8px",
             borderRadius: "4px",
-            cursor: isSelectable ? "pointer" : "default",
+            cursor: onSelect ? "pointer" : "default",
+            backgroundColor: selectedItem === item ? "red" : "blue",
           }}
         >
           {item}
