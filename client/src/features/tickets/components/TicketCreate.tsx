@@ -6,7 +6,7 @@ import { useGetApiTicketQueues } from '../../../api/ticket-queues';
 const TicketCreate: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [queueId, setQueueId] = useState<number | undefined>();
+  const [queueName, setQueueName] = useState<string>(''); // Added missing property
   const [priority, setPriority] = useState<string>('Normal'); // Added missing property
   const [dueDate, setDueDate] = useState<string>(''); // Added missing property
   const { data: queues } = useGetApiTicketQueues();
@@ -14,14 +14,13 @@ const TicketCreate: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!queueId) return;
+    if (!queueName) return;
     mutation.mutate({ 
       data: { 
         title, 
         description, 
         ticketQueue: {
-          id: queueId,
-          name: null
+          name: queueName
         },
         priority
       } 
@@ -33,7 +32,10 @@ const TicketCreate: React.FC = () => {
       <h2>Create Ticket</h2>
       <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required />
       <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Description" required />
-      <select value={queueId} onChange={e => setQueueId(Number(e.target.value))} required>
+      <select value={queueName} onChange={e => {
+        const selectedQueue = queues?.data?.find(q => q.id === Number(e.target.value));
+        setQueueName(selectedQueue?.name || '');
+      }} required>
         <option value="">Select Queue</option>
         {queues?.data?.map(q => (
           <option key={q.id} value={q.id}>{q.name}</option>
