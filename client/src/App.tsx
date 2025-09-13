@@ -4,8 +4,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuth, getCurrentToken } from './context/AuthContext';
 
 import { Login } from './features/users/index';
+import { TabbedComponent } from './components/TabbedComponent/index';
 
 import AdminBoard from './dashboards/AdminBoard';
+import TechnicianBoard from './dashboards/TechnicianBoard';
 
 import './App.css';
 import axios from 'axios';
@@ -68,7 +70,7 @@ function App() {
             <QueryClientProvider client={queryClient}>
                 <ErrorBoundary>
                     <Suspense fallback={<div>Loading...</div>}>
-                        {token ? <AdminBoard /> : <Login />}
+                        {token ? <TabbedComponent tabs={[['Admin', <AdminBoard />], ['Technician', <TechnicianBoard /> ]]} /> : <Login />}
                     </Suspense>
                 </ErrorBoundary>
             </QueryClientProvider>
