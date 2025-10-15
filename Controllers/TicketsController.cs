@@ -30,7 +30,8 @@ namespace TicketTracker.Controllers
             bool isAdmin = user.UserGroups.Any(ug => ug.Group.Name == "Admin");
 
             List<Ticket> tickets;
-            if (isAdmin)
+            tickets = await _context.Tickets.ToListAsync();
+            /*if (isAdmin)
             {
                 tickets = await _context.Tickets.ToListAsync();
             }
@@ -46,7 +47,7 @@ namespace TicketTracker.Controllers
                 tickets = await _context.Tickets
                     .Where(t => readableQueueIds.Contains(t.TicketQueue.Id))
                     .ToListAsync();
-            }
+            }*/
 
             return Ok(tickets);
         }
