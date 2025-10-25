@@ -19,6 +19,10 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@babel/generator": "^7.28.5",
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
+    "@babel/types": "^7.28.5",
     "@chromatic-com/storybook": "^4.1.1",
     "@eslint/js": "^9.29.0",
     "@faker-js/faker": "^9.9.0",
