@@ -36,6 +36,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "ReactApp": {
+      "commandName": "Executable",
+      "executablePath": "cmd.exe",
+      "workingDirectory": "client",
+      "commandLineArgs": "/c npm start"
     }
   }
 }

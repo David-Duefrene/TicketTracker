@@ -24,4 +24,9 @@
     <Folder Include="Util\" />
   </ItemGroup>
 
+  <Target Name="ExportOpenApi" AfterTargets="Build">
+    <Exec Command="dotnet swagger tofile --output ./client/swagger.json $(TargetPath) v1" />
+    <Exec Command="npx orval --config orval.config.cjs" workingDirectory="./client"/>
+  </Target>
+
 </Project>
