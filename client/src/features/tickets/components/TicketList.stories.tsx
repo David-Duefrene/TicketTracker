@@ -1,6 +1,6 @@
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import TicketList from './TicketList';
+import { TicketList } from './TicketList';
 
 const meta: Meta<typeof TicketList> = {
   title: 'features/tickets/components/TicketList',
