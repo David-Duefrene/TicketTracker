@@ -10,7 +10,7 @@ namespace TicketTracker.Models
     {
         //public int Id { get; set; }
         //public required string UserName { get; set; }
-        public ICollection<UserGroup> UserGroups { get; set; } = [];
+        public ICollection<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
     }
 
     public class AuthUser
