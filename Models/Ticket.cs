@@ -23,5 +23,5 @@ public class TicketContext(DbContextOptions<TicketContext> options) : DbContext(
 {
     public DbSet<Ticket> Tickets { get; set; } = null!;
 
-public DbSet<TicketTracker.Models.TicketQueue> TicketQueue { get; set; } = default!;
+    public DbSet<TicketTracker.Models.TicketQueue> TicketQueue { get; set; } = default!;
 }

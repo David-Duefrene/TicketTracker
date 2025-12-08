@@ -1,4 +1,4 @@
-namespace TicketTracker.Models.Dtos;
+namespace TicketTracker.DTO;
 
 public class TicketDto
 {

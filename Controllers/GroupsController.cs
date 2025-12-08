@@ -1,12 +1,26 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using System.Linq;
 using TicketTracker.Filters;
 using TicketTracker.Models;
 
 namespace TicketTracker.Controllers
 {
+    // DTOs for simplified responses
+    public class PermissionDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+    }
+
+    public class GroupDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public IEnumerable<PermissionDto> QueuePermissions { get; set; } = Enumerable.Empty<PermissionDto>();
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -20,24 +34,44 @@ namespace TicketTracker.Controllers
         }
 
         // GET: api/Groups
+        // Return only Id and Name for group and its queue permissions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
+        public async Task<ActionResult<IEnumerable<GroupDto>>> GetGroups()
         {
-            return await _context.Groups.ToListAsync();
+            var groups = await _context.Groups
+                .Include(g => g.QueuePermissions)
+                .Select(g => new GroupDto
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    QueuePermissions = g.QueuePermissions.Select(q => new PermissionDto { Id = q.Id, Name = q.Name })
+                })
+                .ToListAsync();
+
+            return Ok(groups);
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroup(int id)
+        public async Task<ActionResult<GroupDto>> GetGroup(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
+            var group = await _context.Groups
+                .Include(g => g.QueuePermissions)
+                .Where(g => g.Id == id)
+                .Select(g => new GroupDto
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    QueuePermissions = g.QueuePermissions.Select(q => new PermissionDto { Id = q.Id, Name = q.Name })
+                })
+                .FirstOrDefaultAsync();
 
-            if (@group == null)
+            if (group == null)
             {
                 return NotFound();
             }
 
-            return @group;
+            return Ok(group);
         }
 
         // GET: api/Groups/my

@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+using TicketTracker.DTO;
 using TicketTracker.Models;
 using TicketTracker.Filters;
 
@@ -72,9 +73,17 @@ namespace TicketTracker.Controllers
         // GET: api/Users
         [HttpGet]
         [AdminGroupAuthorization]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserReadDto>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .AsNoTracking()
+                .Include(u => u.UserGroups)
+                    .ThenInclude(ug => ug.Group)
+                .ToListAsync();
+
+            var dtos = users.Select(UserReadDto.FromModel).ToList();
+
+            return dtos;
         }
 
         // GET: api/Users/5

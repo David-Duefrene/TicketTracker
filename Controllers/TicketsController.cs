@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TicketTracker.DTO;
 using TicketTracker.Models;
-using TicketTracker.Models.Dtos;
 using TicketTracker.Services;
 
 namespace TicketTracker.Controllers
