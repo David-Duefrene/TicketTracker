@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-
 using TicketTracker.DTO;
-using TicketTracker.Models;
 using TicketTracker.Filters;
+using TicketTracker.Models;
 
 public class TokenService
 {
@@ -79,26 +78,30 @@ namespace TicketTracker.Controllers
                 .AsNoTracking()
                 .Include(u => u.UserGroups)
                     .ThenInclude(ug => ug.Group)
+                    .Select(u => UserReadDto.FromModel(u))
                 .ToListAsync();
 
-            var dtos = users.Select(UserReadDto.FromModel).ToList();
-
-            return dtos;
+            return Ok(users);
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         [AdminGroupAuthorization]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<UserReadDto>> GetUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users
+                .AsNoTracking()
+                .Include(u => u.UserGroups)
+                    .ThenInclude(ug => ug.Group)
+                    .Select(u => UserReadDto.FromModel(u))
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            return user;
+            return Ok(user);
         }
 
         // PUT: api/Users/5
@@ -106,9 +109,9 @@ namespace TicketTracker.Controllers
         [HttpPut("{id}")]
         [AdminGroupAuthorization]
         public async Task<IActionResult> PutUser(string id, User user)
-        {
+                {
             if (id != user.Id)
-            {
+                    {
                 return BadRequest();
             }
 
@@ -144,7 +147,7 @@ namespace TicketTracker.Controllers
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
-
+   
             return CreatedAtAction("GetUser", new { id = newUser.Id }, newUser);
         }
 
