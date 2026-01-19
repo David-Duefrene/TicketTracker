@@ -107,4 +107,38 @@ namespace TicketTracker.DTO
             return GroupId.HasValue || !string.IsNullOrWhiteSpace(Name);
         }
     }
+
+    /// <summary>
+    /// New DTO used for creating or updating a user via the API.
+    /// Accepts only: UserName (required), Email (required), Password (required), PhoneNumber (optional),
+    /// and an optional list of userGroups (each referenced by Id). Optional properties can be omitted.
+    /// </summary>
+    public class UserSaveDto
+    {
+        [Required]
+        public required string UserName { get; init; }
+
+        [Required]
+        [EmailAddress]
+        public required string Email { get; init; }
+
+        [Required]
+        public required string Password { get; init; }
+
+        public string? PhoneNumber { get; init; }
+
+        /// <summary>
+        /// Optional list of user group references; only the Id is used when provided.
+        /// If omitted the user's groups won't be changed by PUT.
+        /// </summary>
+        public List<UserGroupIdDto>? UserGroups { get; init; }
+    }
+
+    /// <summary>
+    /// Simple DTO to reference an existing group by Id when creating/updating a user.
+    /// </summary>
+    public class UserGroupIdDto
+    {
+        public int? Id { get; init; }
+    }
 }

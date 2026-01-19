@@ -108,29 +108,71 @@ namespace TicketTracker.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [AdminGroupAuthorization]
-        public async Task<IActionResult> PutUser(string id, User user)
-                {
-            if (id != user.Id)
-                    {
+        public async Task<IActionResult> PutUser(string id, [FromBody] UserSaveDto dto)
+        {
+            if (dto == null)
                 return BadRequest();
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            // Update basic fields
+            user.UserName = dto.UserName;
+            user.Email = dto.Email;
+            user.PhoneNumber = dto.PhoneNumber;
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return BadRequest(updateResult.Errors);
             }
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
+            // Update password: remove existing password (if any) and add the new one
+            if (!string.IsNullOrEmpty(dto.Password))
             {
+                if (await _userManager.HasPasswordAsync(user))
+                {
+                    var removePass = await _userManager.RemovePasswordAsync(user);
+                    if (!removePass.Succeeded)
+                        return BadRequest(removePass.Errors);
+                }
+
+                var addPass = await _userManager.AddPasswordAsync(user, dto.Password);
+                if (!addPass.Succeeded)
+                    return BadRequest(addPass.Errors);
+            }
+
+            // Update groups only if provided in the payload. If omitted, do not change groups.
+            if (dto.UserGroups != null)
+            {
+                // Clear existing user-group links
+                var existing = _context.UserGroups.Where(ug => ug.UserId == user.Id);
+                _context.UserGroups.RemoveRange(existing);
+
+                var groupIds = dto.UserGroups
+                    .Where(g => g.Id.HasValue)
+                    .Select(g => g.Id!.Value)
+                    .Distinct()
+                    .ToList();
+
+                // Only add links for groups that exist - fetch group entities
+                var groups = await _context.Groups
+                    .Where(g => groupIds.Contains(g.Id))
+                    .ToListAsync();
+
+                foreach (var grp in groups)
+                {
+                    _context.UserGroups.Add(new UserGroup
+                    {
+                        UserId = user.Id,
+                        User = user,
+                        GroupId = grp.Id,
+                        Group = grp
+                    });
+                }
+
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
             }
 
             return NoContent();
