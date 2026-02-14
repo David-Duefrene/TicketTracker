@@ -182,15 +182,51 @@ namespace TicketTracker.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [AdminGroupAuthorization]
-        public async Task<ActionResult<User>> PostUser([FromBody] AuthUser model)
+        public async Task<ActionResult<User>> PostUser([FromBody] UserPostDto dto)
         {
-            var newUser = new User { UserName = model.Username };
-            var result = await _userManager.CreateAsync(newUser, model.Password);
+            if (dto == null)
+                return BadRequest();
+
+            var newUser = new User
+            {
+                UserName = dto.UserName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber
+            };
+
+            var result = await _userManager.CreateAsync(newUser, dto.Password);
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
-   
-            return CreatedAtAction("GetUser", new { id = newUser.Id }, newUser);
+
+            // If groups were provided, create user-group links for existing groups only
+            if (dto.UserGroups != null && dto.UserGroups.Any())
+            {
+                var groupIds = dto.UserGroups
+                    .Where(g => g.Id.HasValue)
+                    .Select(g => g.Id!.Value)
+                    .Distinct()
+                    .ToList();
+
+                var groups = await _context.Groups
+                    .Where(g => groupIds.Contains(g.Id))
+                    .ToListAsync();
+
+                foreach (var grp in groups)
+                {
+                    _context.UserGroups.Add(new UserGroup
+                    {
+                        UserId = newUser.Id,
+                        User = newUser,
+                        GroupId = grp.Id,
+                        Group = grp
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return CreatedAtAction("GetUser", new { id = newUser.Id }, UserReadDto.FromModel(newUser));
         }
 
         // DELETE: api/Users/5

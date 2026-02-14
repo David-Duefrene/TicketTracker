@@ -141,4 +141,28 @@ namespace TicketTracker.DTO
     {
         public int? Id { get; init; }
     }
+
+    /// <summary>
+    /// DTO used for POST /api/Users. Mirrors the fields required to create a user via the API.
+    /// Includes UserName and Password (required). Optional Email, PhoneNumber and UserGroups can be provided.
+    /// </summary>
+    public class UserPostDto
+    {
+        [Required]
+        public required string UserName { get; init; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        public required string Password { get; init; }
+
+        [EmailAddress]
+        public string? Email { get; init; }
+
+        public string? PhoneNumber { get; init; }
+
+        /// <summary>
+        /// Optional list of user group references; only the Id is used when provided.
+        /// </summary>
+        public List<UserGroupIdDto>? UserGroups { get; init; }
+    }
 }
